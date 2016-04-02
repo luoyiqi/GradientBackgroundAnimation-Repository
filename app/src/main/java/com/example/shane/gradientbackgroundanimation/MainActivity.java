@@ -49,11 +49,11 @@ public class MainActivity extends AppCompatActivity {
 
                             final TransitionDrawable tCrossFader = new TransitionDrawable(tLayers);
                             tCrossFader.setCrossFadeEnabled(true);
-                            image.setImageDrawable(tCrossFader);
 
                             Runnable transitionRunnable = new Runnable() {
                                 @Override
                                 public void run() {
+                                    image.setImageDrawable(tCrossFader);
                                     tCrossFader.startTransition(speedInMs);
                                 }
                             };
@@ -76,11 +76,11 @@ public class MainActivity extends AppCompatActivity {
 
                             final TransitionDrawable tCrossFader = new TransitionDrawable(tLayers);
                             tCrossFader.setCrossFadeEnabled(true);
-                            image.setImageDrawable(tCrossFader);
 
                             Runnable transitionRunnable = new Runnable() {
                                 @Override
                                 public void run() {
+                                    image.setImageDrawable(tCrossFader);
                                     tCrossFader.startTransition(speedInMs);
                                 }
                             };
