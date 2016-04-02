@@ -18,11 +18,12 @@ public class MainActivity extends AppCompatActivity {
 
         ImageView image = (ImageView) findViewById(R.id.background);
 
-        Drawable backgrounds[] = new Drawable[2];
+        Drawable backgrounds[] = new Drawable[3];
         backgrounds[0] = ContextCompat.getDrawable(this, R.drawable.gradient1);
         backgrounds[1] = ContextCompat.getDrawable(this, R.drawable.gradient2);
+        backgrounds[2] = ContextCompat.getDrawable(this, R.drawable.gradient3);
 
-        Crossfade(image, backgrounds, 5000);
+        Crossfade(image, backgrounds, 10000);
     }
 
     public void Crossfade(final ImageView image, final Drawable layers[], final int speedInMs) {
@@ -33,32 +34,67 @@ public class MainActivity extends AppCompatActivity {
 
             BackgroundGradientThread(Context c) {
                 mainContext = c;
-
-                crossFader = new TransitionDrawable(layers);
-                crossFader.setCrossFadeEnabled(true);
-                image.setImageDrawable(crossFader);
             }
 
             public void run() {
+                Handler mHandler = new Handler(mainContext.getMainLooper());
+                boolean reverse = false;
+
                 while (true) {
-                    try { Thread.sleep(speedInMs); } catch (Exception e) { }
+                    if (!reverse) {
+                        for (int i = 0; i < layers.length - 1; i++) {
+                            Drawable tLayers[] = new Drawable[2];
+                            tLayers[0] = layers[i];
+                            tLayers[1] = layers[i + 1];
 
-                    Handler mHandler = new Handler(mainContext.getMainLooper());
+                            final TransitionDrawable tCrossFader = new TransitionDrawable(tLayers);
+                            tCrossFader.setCrossFadeEnabled(true);
+                            image.setImageDrawable(tCrossFader);
 
-                    Runnable transitionRunnable = new Runnable() {
-                        @Override
-                        public void run() {
-                            if (first) {
-                                crossFader.startTransition(speedInMs);
-                                first = false;
-                            } else {
-                                crossFader.reverseTransition(speedInMs);
-                                first = true;
+                            Runnable transitionRunnable = new Runnable() {
+                                @Override
+                                public void run() {
+                                    tCrossFader.startTransition(speedInMs);
+                                }
+                            };
+
+                            mHandler.post(transitionRunnable);
+
+                            try {
+                                Thread.sleep(speedInMs);
+                            } catch (Exception e) {
                             }
                         }
-                    };
 
-                    mHandler.post(transitionRunnable);
+                        reverse = true;
+                    }
+                    else if (reverse) {
+                        for (int i = layers.length - 1; i > 0; i--) {
+                            Drawable tLayers[] = new Drawable[2];
+                            tLayers[0] = layers[i];
+                            tLayers[1] = layers[i - 1];
+
+                            final TransitionDrawable tCrossFader = new TransitionDrawable(tLayers);
+                            tCrossFader.setCrossFadeEnabled(true);
+                            image.setImageDrawable(tCrossFader);
+
+                            Runnable transitionRunnable = new Runnable() {
+                                @Override
+                                public void run() {
+                                    tCrossFader.startTransition(speedInMs);
+                                }
+                            };
+
+                            mHandler.post(transitionRunnable);
+
+                            try {
+                                Thread.sleep(speedInMs);
+                            } catch (Exception e) {
+                            }
+                        }
+
+                        reverse = false;
+                    }
                 }
             }
         }
